@@ -2,6 +2,13 @@ package com.board.board.repository;
 
 import com.board.board.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface MemberRepository extends JpaRepository<Member,Long> {
+import java.util.Optional;
+
+@Repository
+public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    Optional<Member> findById(long memberId);
+
 }
