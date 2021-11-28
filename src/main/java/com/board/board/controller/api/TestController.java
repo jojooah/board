@@ -9,13 +9,13 @@ public class TestController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/test")
+    @RequestMapping(value = "/api/test")
     public String testController(){
         return "test";
     }
 
     @ResponseBody
-    @RequestMapping(value = "/l7check")
+    @RequestMapping(value = "/api/l7check")
     public String l7check(){
         return "OK";
     }

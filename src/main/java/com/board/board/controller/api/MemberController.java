@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/member")
 public class MemberController extends AbstractController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
