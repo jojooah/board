@@ -33,4 +33,5 @@ public class MemberService {
         }
         return new Result<>(member, ResultCode.Success);
     }
+
 }
