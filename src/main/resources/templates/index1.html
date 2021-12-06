@@ -27,13 +27,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"   th:text="|로그인: ${member.name}|">로그인 사용자 이름</a></li>
-                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"  ></a>
-                    <form th:action="@{/members/logout}" method="post">
-                        <button class="w-100 btn btn-dark btn-lg" type="submit">
-                            로그아웃
-                        </button>
-                    </form></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"  th:onclick="|location.href='@{members/add}'|">회원가입</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"  th:onclick="|location.href='@{members/login}'|">로그인</a></li>
                 <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
             </ul>
         </div>

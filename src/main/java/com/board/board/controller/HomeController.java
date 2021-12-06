@@ -17,10 +17,10 @@ public class HomeController {
     public String home(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
         if(loginMember==null){
             log.info("로그아웃상태");
-            return "index";
+            return "index1";
         }
         log.info("로그인상태");
         model.addAttribute("member",loginMember);
-        return "home";
+        return "index";
     }
 }
