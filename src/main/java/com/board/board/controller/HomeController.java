@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequestMapping
 @Slf4j
 public class HomeController {
-    @GetMapping("/home")
+    @GetMapping("/")
     public String home(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
         if(loginMember==null){
             log.info("로그아웃상태");
-            return "index1";
+            return "index";
         }
         log.info("로그인상태");
         model.addAttribute("member",loginMember);
-        return "index";
+        return "login_index";
     }
+
 }

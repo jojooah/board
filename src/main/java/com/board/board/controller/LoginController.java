@@ -8,7 +8,6 @@ import com.board.board.constant.SessionConst;
 import com.board.board.entity.Member;
 import com.board.board.repository.MemberRepository;
 import com.board.board.service.LoginService;
-import com.board.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/members")
@@ -35,10 +33,15 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+
+
     @RequestMapping("/add")
     public String addForm(@ModelAttribute("memberFormDto") MemberFormDto memberFormDto){
         return "members/addMemberForm";
     }
+
+
+
     @PostMapping("/add")
     public String save(@Valid @ModelAttribute MemberFormDto memberFormDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -57,7 +60,7 @@ public class LoginController {
         }
         else{
             bindingResult.reject("addMemberFail","비밀번호가 달라요~");
-           return "members/addMemberForm";
+            return "members/addMemberForm";
         }
 
     }
@@ -66,11 +69,12 @@ public class LoginController {
     @RequestMapping("/login")
     public String loginForm(@ModelAttribute("loginFormDto")LoginFormDto loginFormDto){
             return "members/loginForm";
-
     }
 
-    @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("loginFormDto")LoginFormDto loginFormDto, BindingResult bindingResult,
+
+
+     @PostMapping("/login")
+    public String login1(@Valid @ModelAttribute("loginFormDto")LoginFormDto loginFormDto, BindingResult bindingResult,
                         HttpServletRequest request){
 
         if(bindingResult.hasErrors()){
@@ -85,8 +89,9 @@ public class LoginController {
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성(기본값이 true)
         HttpSession session=request.getSession(true);
         session.setAttribute(SessionConst.LOGIN_USER,loginMember);
-        return "redirect:/home";
+        return "redirect:/";
     }
+
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request){
@@ -97,6 +102,6 @@ public class LoginController {
 
         }
         log.info("로그아웃2");
-        return "redirect:/home";
+        return "redirect:/";
     }
 }
