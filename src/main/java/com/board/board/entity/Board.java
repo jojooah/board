@@ -17,6 +17,8 @@ public class Board {
     private Long id;
 
     private String title;
+
+    @Lob
     private String content;
     private LocalDateTime updateTime;
 
@@ -27,5 +29,6 @@ public class Board {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Column(name="like_")
     private int like;
 }

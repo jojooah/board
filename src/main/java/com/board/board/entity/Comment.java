@@ -16,7 +16,7 @@ public class Comment {
     @Id
     @Column(name="comment_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="member_id")

@@ -22,6 +22,8 @@ public class ImgBoard {
     @Lob
     private String content;
     private LocalDateTime updateTime;
+
+    @Column(name="like_")
     private int like;
 
     @ManyToOne
