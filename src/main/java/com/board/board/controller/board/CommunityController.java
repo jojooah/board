@@ -109,7 +109,19 @@ public class CommunityController {
             return "board/content";
         }
     }
+    @RequestMapping("/commu_delete")
+    public String comDelete(@RequestParam Long id){
+        if(id==null){return "redirect:/board/community";}
 
+        Board board=boardRepository.findById(id).orElse(null);
 
+        if(board!=null){
+            boardRepository.delete(board);
+
+        }
+
+        return "redirect:/board/community";
+
+    }
 
 }
