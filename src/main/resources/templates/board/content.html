@@ -15,7 +15,8 @@
 
  </div>
 
-    <button type="submit" class="btn btn-warning">확인</button>
+    <a type="button" class="btn btn-warning" th:href="@{/board/community}">목록</a>
+    <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
   </form>
 </main>
 

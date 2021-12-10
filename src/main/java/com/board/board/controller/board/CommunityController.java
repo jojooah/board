@@ -44,27 +44,53 @@ public class CommunityController {
     }
 
     @RequestMapping("/commu_form")
-    public String commuForm(Model model){
-
+    public String commuForm(@RequestParam(required = false) Long id, Model model){
         CommunityFormDto commu=new CommunityFormDto();
+        if (id!=null)
+        {
+            Board board=boardRepository.findById(id).orElse(null);
+            if (board==null){
+                return  "redirect:/board/community";
+            }
+
+            commu.setId(board.getId());
+            commu.setTitle(board.getTitle());
+            commu.setContent(board.getContent());
+
+
+        }
+
         model.addAttribute("Form",commu);
         return "board/commu_form";
 
 
     }
     @PostMapping("/commu_form")
-    public String commuFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto, BindingResult bindingResult){
+    public String commuFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto, @RequestParam(required = false) Long id, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return "board/commu_form";
         }
+        if (id==null)
+        {
+            Board board=new Board();
 
-        Board board=new Board();
+            board.setTitle(communityFormDto.getTitle());
+            board.setContent(communityFormDto.getContent());
+            board.setCategory(Category.COMMU);
+            board.setLike(0);
+            boardRepository.save(board);
+        }
+        else
+        {
+            Board board=boardRepository.findById(id).orElse(null);
+            if(board==null){
+                return "redirect:/board/community";
+            }
+            board.setContent(communityFormDto.getContent());
+            board.setTitle(communityFormDto.getTitle());
+            boardRepository.save(board);
 
-        board.setTitle(communityFormDto.getTitle());
-        board.setContent(communityFormDto.getContent());
-        board.setCategory(Category.COMMU);
-        board.setLike(0);
-        boardRepository.save(board);
+        }
         return "redirect:/board/community";
     }
 
@@ -83,6 +109,7 @@ public class CommunityController {
             return "board/content";
         }
     }
+
 
 
 }
