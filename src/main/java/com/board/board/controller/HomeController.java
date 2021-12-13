@@ -15,13 +15,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 public class HomeController {
     @GetMapping("/")
     public String home(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
-        if(loginMember==null){
-            log.info("로그아웃상태");
+
+
             return "index";
-        }
-        log.info("로그인상태");
-        model.addAttribute("member",loginMember);
-        return "login_index";
     }
 
 }
