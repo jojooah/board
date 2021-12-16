@@ -18,9 +18,44 @@
     <a type="button" class="btn btn-warning" th:href="@{/board/community}">목록</a>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
+    <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}">좋아요</a>
+    </br></br></br>
+
+
+    <div class="card-header bg-light">
+        <i class="fa fa-comment fa"></i> 댓글
+    </div>
+    <div class="card-body" th:each="comment : ${comments}" >
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <span th:text="${comment.content}"></span>
+
+            </li>
+        </ul>
+    </div>
+
 
 </main>
 
+
+
+
+<form th:action="@{/board/commu/comment(id=${board.id})}" method="post">
+<div class="card-header bg-light">
+    <i class="fa fa-comment fa"></i> REPLY
+</div>
+<div class="card-body" th:object="${commentForm}" >
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" th:field="*{content}" th:errorclass="field-error"></textarea>
+            <div class="field-error" th:errors="*{content}" />
+            <button type="submit" >댓글 등록</button>
+        </li>
+    </ul>
+</div>
+</form>
+</div>
 
 
 <!-- Optional JavaScript; choose one of the two! -->

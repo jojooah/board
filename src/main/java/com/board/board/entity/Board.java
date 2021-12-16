@@ -7,6 +7,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter@Setter@ToString
@@ -28,6 +30,9 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "board")
+    private List<Comment> comments=new ArrayList<>();
 
     @Column(name="like_")
     private int like;

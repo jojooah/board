@@ -20,5 +20,5 @@ public class Img {
     @JoinColumn(name="imgBoard_id")
     private ImgBoard imgBoard;
 
-    private String thumbNailYn; //썸네일 이미지 여부
+
 }
