@@ -1,0 +1,30 @@
+<!doctype html>
+
+<html >
+<head th:replace="fragments/common :: head('자유게시판')">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
+
+<main class="container">
+
+
+<form th:action method="post" th:object="${photoDto}" enctype="multipart/form-data">
+    <ul>
+
+        <textarea class="form-control"  th:field="*{title}" th:errorclass="field-error"></textarea>
+        <label for="title"></label>
+        <div class="field-error" th:errors="*{title}" />
+
+    </ul>
+    <ul>
+        <textarea class="form-control"  th:field="*{content}" style="height: 500px" th:errorclass="field-error"></textarea>
+        <label for="content"></label>
+        <div class="field-error" th:errors="*{content}" />
+        <li>파일<input type="file" th:field="*{img}" ></li>
+    </ul>
+    <button type="submit" >확인</button>
+</form>
+</main>
+</body>
+</html>
