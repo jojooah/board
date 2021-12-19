@@ -1,30 +1,26 @@
 <!doctype html>
 
-<html >
+<html xmlns="http://www.w3.org/1999/html">
 <head th:replace="fragments/common :: head('자유게시판')">
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
 
 <main class="container">
-    <form action="" th:action="@{/board/commu_form}" th:object="${Form}" method="post">
-        <input type="hidden" th:field="*{id}">
+    <div th:object="${member}">
 
-    <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" th:field="*{title}" th:errorclass="field-error"></textarea>
-        <label for="title">제목</label>
-         <div class="field-error" th:errors="*{title}" />
-    </div></br>
-    <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" th:field="*{content}" style="height: 500px" th:errorclass="field-error"></textarea>
-        <label for="content">내용</label>
-         <div class="field-error" th:errors="*{content}" />
+        <div th:text="${member.email}"></div>
+        <div th:text="${member.name}"></div>
+        <div th:text="${member.level}"></div>
+        <a th:href="|@{/members/myBoard}|">내가 쓴 글 보기</a></br>
+        <a th:href="|@{/members/myComment}|">내가 쓴 댓글 보기</a></br>
+        <a th:href="|@{/members/myScrap}|">내가 스크랩한 글 보기</a></br>
+        <a th:href="|@{/members/changePwd}|">비번 바꾸기</a></br>
     </div>
 
-    <button type="submit" class="btn btn-warning">확인</button>
-        </form>
-</main>
 
+
+</main>
 
 
 <!-- Optional JavaScript; choose one of the two! -->

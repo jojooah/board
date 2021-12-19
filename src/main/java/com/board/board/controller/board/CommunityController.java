@@ -2,14 +2,17 @@ package com.board.board.controller.board;
 
 import com.board.board.Dto.CommentDto;
 import com.board.board.Dto.CommunityFormDto;
+import com.board.board.Dto.ReCommentDto;
 import com.board.board.constant.Category;
 import com.board.board.constant.SessionConst;
 import com.board.board.entity.Board;
 import com.board.board.entity.Comment;
 import com.board.board.entity.Member;
+import com.board.board.entity.ReComment;
 import com.board.board.repository.BoardRepository;
 import com.board.board.repository.CommentRepository;
 import com.board.board.repository.MemberRepository;
+import com.board.board.repository.ReCommentRepository;
 import com.board.board.service.BoardService;
 import com.board.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class CommunityController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final ReCommentRepository reCommentRepository;
     @RequestMapping("/community")
     public String community(Model model){
 
@@ -46,7 +50,7 @@ public class CommunityController {
         return "board/community";
     }
 
-    @RequestMapping("/commu_form")
+    @GetMapping("/commu_form")
     public String commuForm(@RequestParam(required = false) Long id, Model model){
         CommunityFormDto commu=new CommunityFormDto();
         if (id!=null)
@@ -69,7 +73,9 @@ public class CommunityController {
 
     }
     @PostMapping("/commu_form")
-    public String commuFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto, @RequestParam(required = false) Long id, BindingResult bindingResult){
+    public String commuFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto, @RequestParam(required = false) Long id,
+                                BindingResult bindingResult,
+                                @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember ){
         if(bindingResult.hasErrors()){
             return "board/commu_form";
         }
@@ -81,6 +87,9 @@ public class CommunityController {
             board.setContent(communityFormDto.getContent());
             board.setCategory(Category.COMMU);
             board.setLike(0);
+            if (loginMember!=null){
+                board.setMember(loginMember);
+            }
             boardRepository.save(board);
         }
         else
@@ -97,13 +106,14 @@ public class CommunityController {
         return "redirect:/board/community";
     }
 
-    @RequestMapping("/content")
+    @GetMapping("/content")
     public String content(@RequestParam Long id, Model model){
         if(id==null){ return "redirect:/board/community";}
 
         Board board=boardRepository.findById(id).orElse(null);
         List<Comment> comments = board.getComments();
         CommentDto commentDto=new CommentDto();
+        ReCommentDto reCommentDto=new ReCommentDto();
         if(board==null){
             return "redirect:/board/community";
 
@@ -112,13 +122,14 @@ public class CommunityController {
             model.addAttribute("board",board);
             model.addAttribute("comments",comments);
             model.addAttribute("commentForm",commentDto);
+            model.addAttribute("recommentForm",reCommentDto);
             log.info("츄라이츄라이");
             return "board/content";
         }
 
 
     }
-    @RequestMapping("/commu_delete")
+    @GetMapping("/commu_delete")
     public String comDelete(@RequestParam Long id){
         if(id==null){return "redirect:/board/community";}
 
@@ -133,7 +144,7 @@ public class CommunityController {
 
     }
 
-    @RequestMapping("/commu_like")
+    @GetMapping("/commu_like")
     public String commu_like(@RequestParam Long id){
         if(id==null) return "redirect:/board/community";
 
@@ -166,6 +177,27 @@ public class CommunityController {
         comment.setMember(loginMember);
         commentRepository.save(comment);
         redirectAttributes.addAttribute("id",id);
+
+        return "redirect:/board/content";
+    }
+    @PostMapping("/commu/recomment")
+    public String recomment(@Valid @ModelAttribute ReCommentDto recommentDto, BindingResult bindingResult,
+                            @RequestParam("id") Long id,@RequestParam("contentId") Long contentId,
+                            @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember,
+                            RedirectAttributes redirectAttributes){
+        Comment comment=commentRepository.findById(id).orElse(null);
+        if(comment==null){return "board/content";}
+        if(bindingResult.hasErrors()){
+            return "board/content";
+        }
+        log.info("z");
+        ReComment reComment=new ReComment();
+        reComment.setContent(recommentDto.getContent());
+        reComment.setMember(loginMember);
+        reComment.setUpdateTime(LocalDateTime.now());
+        reComment.setComment(comment);
+        reCommentRepository.save(reComment);
+        redirectAttributes.addAttribute("id",contentId);
 
         return "redirect:/board/content";
     }

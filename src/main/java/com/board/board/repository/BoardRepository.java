@@ -1,6 +1,7 @@
 package com.board.board.repository;
 
 import com.board.board.entity.Board;
+import com.board.board.entity.Comment;
 import com.board.board.entity.Member;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,5 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
 
     @Query("select b from Board b where b.like>=:like")
     List<Board> findHot(@Param("like") int like);
+
 }

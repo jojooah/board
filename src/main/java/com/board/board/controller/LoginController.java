@@ -5,21 +5,27 @@ import com.board.board.Dto.MemberFormDto;
 import com.board.board.constant.Level;
 import com.board.board.constant.Role;
 import com.board.board.constant.SessionConst;
+import com.board.board.entity.Board;
+import com.board.board.entity.BoardScrap;
+import com.board.board.entity.Comment;
 import com.board.board.entity.Member;
+import com.board.board.repository.BoardRepository;
+import com.board.board.repository.BoardScrapRepository;
+import com.board.board.repository.CommentRepository;
 import com.board.board.repository.MemberRepository;
 import com.board.board.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/members")
@@ -33,6 +39,9 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
+    private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
+    private final BoardScrapRepository boardScrapRepository;
 
 
     @RequestMapping("/add")
@@ -104,4 +113,72 @@ public class LoginController {
         log.info("로그아웃2");
         return "redirect:/";
     }
+
+    @GetMapping("/my")
+    public String my(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
+        model.addAttribute("member",loginMember);
+        return "members/my";
+    }
+    @GetMapping("/myBoard")
+    public String myBoard(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+        List<Board> boards=loginMember.getBoards();
+
+        int size=boards.size();
+
+        model.addAttribute("boards",boards);
+
+        return "members/myBoards";
+    }
+    @GetMapping("/myComment")
+    public String myComments(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+        List<Comment> comments=commentRepository.findComments(loginMember);
+        log.info("size={}",comments.size());
+        model.addAttribute("comments",comments);
+        return "members/myComments";
+    }
+    @GetMapping("/changePwd")
+    public String myChangePwd() {
+
+        return "members/changePwd";
+
+    }
+
+    @PostMapping("/changePwd")
+    public String changePWd(@RequestParam String cur_pwd,@RequestParam String new_pwd,
+                            @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember){
+        if(loginMember.getPassword().equals(cur_pwd)){
+            loginMember.setPassword(new_pwd);
+            memberRepository.save(loginMember);
+        }
+
+        return "redirect:/";
+
+
+    }
+    @GetMapping("/scrap")
+    public String scrap(@RequestParam("id") Long id,
+                        @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember)
+
+    {
+
+        BoardScrap boardScrap=new BoardScrap();
+        Board board=boardRepository.findById(id).orElse(null);
+        boardScrap.setBoard(board);
+        boardScrap.setMember(loginMember);
+        boardScrapRepository.save(boardScrap);
+        return"redirect:/";
+    }
+
+
+    @GetMapping("/myScrap")
+    public String myScrap( @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+       log.info("1");
+        List<BoardScrap> boards=boardScrapRepository.findBoard(loginMember);
+        log.info("2");
+        model.addAttribute("boards",boards);
+        log.info("3");
+        return "members/myScrapboard";
+
+    }
 }
+

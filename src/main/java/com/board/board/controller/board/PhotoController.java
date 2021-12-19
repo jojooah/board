@@ -42,9 +42,10 @@ public class PhotoController {
         if (session==null){
             return "redirect:members/login";
         }
-
-        List<Img> imgs=imgRepository.findAll();
-        model.addAttribute("imgs",imgs);
+        List<ImgBoard> imgBoards=imgBoardRepository.findAll();
+      //  List<Img> imgs=imgRepository.findAll();
+      //  model.addAttribute("imgs",imgs);
+        model.addAttribute("imgBoards",imgBoards);
         return "photo/photoboard";
     }
 

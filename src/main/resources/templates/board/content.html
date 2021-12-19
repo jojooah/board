@@ -19,7 +19,11 @@
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}">좋아요</a>
+    <span class="nav-item me-2" th:if="${session.loginMember != null}">
+        <a type="button" class="btn btn-warning" th:href="@{/members/scrap(id=${board.id})}">스크랩</a>
+    </span>
     </br></br></br>
+
 
 
     <div class="card-header bg-light">
@@ -29,9 +33,29 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
                 <span th:text="${comment.content}"></span>
+                <div class="card-header bg-light">
+                    <i class="fa fa-comment fa"></i> 대댓글</div>
+                      <ul class="list-group list-group-flush">
+                          <li class="list-group-item">
+                            <span th:each="recomment:${comment.Recomments}">
 
+                            <span th:text="${recomment.content}"></span>
+
+                             </span>
+                          </li>
+
+
+
+                      </ul>
             </li>
         </ul>
+
+        <form th:action="@{/board/commu/recomment/(id=${comment.id},contentId=${board.id})}" method="post">
+            <div class="card-body" th:object="${recommentForm}" >
+                <input type="text" class="form-control"  rows="3" th:field="*{content}" th:errorclass="field-error"></input>
+                <div class="field-error" th:errors="*{content}" /></div>
+            <button type="submit" >대댓글 등록</button>
+        </form>
     </div>
 
 

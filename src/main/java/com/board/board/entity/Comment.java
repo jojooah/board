@@ -7,6 +7,8 @@ import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter@Setter
@@ -24,6 +26,9 @@ public class Comment {
 
     private String content;
     private LocalDateTime updateTime;
+
+    @OneToMany(mappedBy = "comment")
+    List<ReComment> Recomments=new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="board_id")

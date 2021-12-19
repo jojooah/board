@@ -23,4 +23,6 @@ public class HotBoardController {
         return "hotboard/hotboard";
     }
 
+
+
 }

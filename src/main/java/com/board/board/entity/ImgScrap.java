@@ -2,7 +2,7 @@ package com.board.board.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.annotations.Many;
+
 
 import javax.persistence.*;
 

@@ -6,6 +6,8 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter@Setter
@@ -25,6 +27,9 @@ public class ImgBoard {
 
     @Column(name="like_")
     private int like;
+
+    @OneToMany(mappedBy = "imgBoard")
+    List<Img> Imgs=new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="member_id")
