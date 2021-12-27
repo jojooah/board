@@ -16,8 +16,11 @@
  </div>
 
     <a type="button" class="btn btn-warning" th:href="@{/board/community}">목록</a>
+    <span th:if="${board.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==board.member.id}">
+
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
+    </span>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}">좋아요</a>
     <span class="nav-item me-2" th:if="${session.loginMember != null}">
         <a type="button" class="btn btn-warning" th:href="@{/members/scrap(id=${board.id})}">스크랩</a>

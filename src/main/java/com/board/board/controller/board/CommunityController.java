@@ -136,6 +136,17 @@ public class CommunityController {
         Board board=boardRepository.findById(id).orElse(null);
 
         if(board!=null){
+            List<Comment> comments=commentRepository.findByBoard(board);
+
+            for (Comment comment:comments){
+
+                List<ReComment> reComments=reCommentRepository.findByComment(comment);
+                for (ReComment reComment : reComments){
+                    reCommentRepository.delete(reComment);
+                }
+                commentRepository.delete(comment);
+            }
+
             boardRepository.delete(board);
 
         }

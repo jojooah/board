@@ -17,6 +17,10 @@
         <div class="card-body">
             <p class="card-text" th:text="${imgBoard.title}"></p>
             <p class="card-text" th:text="${imgBoard.content}"></p>
+            <a type="button" class="btn btn-warning" th:href="@{/photo/images/like(id=${imgBoard.id})}"
+            th:text="|좋아요 ${imgBoard.like}|"></a></br>
+
+
         </div>
 
     </div>

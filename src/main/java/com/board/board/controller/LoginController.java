@@ -1,5 +1,7 @@
 package com.board.board.controller;
 
+import com.board.board.Dto.ChangePwdDto;
+import com.board.board.Dto.FindPwdDto;
 import com.board.board.Dto.LoginFormDto;
 import com.board.board.Dto.MemberFormDto;
 import com.board.board.constant.Level;
@@ -17,6 +19,9 @@ import com.board.board.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/members")
@@ -38,6 +44,12 @@ public class LoginController {
 
     @Autowired
     LoginService loginService;
+
+    @Autowired
+    JavaMailSender javaMailSender;
+    @Value("${spring.mail.username}")
+    private String from;
+
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
@@ -56,6 +68,20 @@ public class LoginController {
         if(bindingResult.hasErrors()){
             return "members/addMemberForm";
 
+        }
+        String mail=memberFormDto.getEmail();
+        String nickname=memberFormDto.getName();
+
+        Member cur_member=memberRepository.findByEmail(mail).orElse(null);
+
+        if(cur_member!=null){
+            bindingResult.reject("addMemberFail","이미 가입한 회원이에요");
+            return "members/addMemberForm";
+        }
+        Member cur_member2=memberRepository.findByName(nickname).orElse(null);
+        if(cur_member2!=null){
+            bindingResult.reject("addMemberFail","닉네임을 다시 설정해 주세요");
+            return "members/addMemberForm";
         }
         if(memberFormDto.getCh_password().equals(memberFormDto.getPassword())){
             Member member=new Member();
@@ -136,21 +162,34 @@ public class LoginController {
         model.addAttribute("comments",comments);
         return "members/myComments";
     }
+
     @GetMapping("/changePwd")
-    public String myChangePwd() {
+    public String myChangePwd(@ModelAttribute("changePwdDto")ChangePwdDto changePwdDto) {
 
         return "members/changePwd";
 
     }
 
     @PostMapping("/changePwd")
-    public String changePWd(@RequestParam String cur_pwd,@RequestParam String new_pwd,
+    public String changePWd(@Valid  @ModelAttribute("changePwdDto")ChangePwdDto changePwdDto, BindingResult bindingResult,
                             @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember){
-        if(loginMember.getPassword().equals(cur_pwd)){
-            loginMember.setPassword(new_pwd);
-            memberRepository.save(loginMember);
+        if(bindingResult.hasErrors()){
+            return "members/changePwd";
         }
-
+        if(loginMember.getPassword().equals(changePwdDto.getCur_pwd())){
+                if(changePwdDto.getNew_pwd().equals(changePwdDto.getCh_new_pwd())) {
+                    loginMember.setPassword(changePwdDto.getNew_pwd());
+                    memberRepository.save(loginMember);
+                }
+                else{
+                    bindingResult.reject("ChangePwdErr", "새로운 비밀번호가 일치하지 않아요~");
+                    return "members/changePwd";
+                }
+        }
+        else {
+            bindingResult.reject("ChangePwdErr", "현재 비밀번호가 일치하지 않아요~");
+            return "members/changePwd";
+        }
         return "redirect:/";
 
 
@@ -179,6 +218,38 @@ public class LoginController {
         log.info("3");
         return "members/myScrapboard";
 
+    }
+
+    @GetMapping("/findPwd")
+    public String findPwd(@ModelAttribute("findPwdDto") FindPwdDto findPwdDto){
+        return "members/FindPwd";
+    }
+
+    @PostMapping("/findPwd")
+    public String findPwd1(@Valid @ModelAttribute("findPwdDto") FindPwdDto findPwdDto,BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+            return "members/FindPwd";
+        }
+        Member member=memberRepository.findByEmail(findPwdDto.getEmail()).orElse(null);
+        if(member==null){
+            bindingResult.reject("FindPwdErr", "가입되지 않은 회원이에요");
+            return "members/FindPwd";
+        }
+        SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
+
+        String uuid= UUID.randomUUID().toString();
+
+        member.setPassword(uuid);
+        memberRepository.save(member);
+
+        simpleMailMessage.setFrom(from);
+        simpleMailMessage.setTo(findPwdDto.getEmail());
+        simpleMailMessage.setSubject("임시 비밀번호 발송");
+        simpleMailMessage.setText("임시 비밀번호는 "+uuid+"입니다. 로그인 후 비밀번호를 변경해 주세요.");
+
+        javaMailSender.send(simpleMailMessage);
+        return"redirect:/";
     }
 }
 

@@ -21,21 +21,39 @@
 
 <main class="form-signin">
 
-    <form action="" th:action  method="post">
+    <form action="" th:action th:object="${changePwdDto}" method="post">
         <img class="mb-4" src="/assets/bootstrap-logo.svg" alt="" width="72" height="57">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p>
+        </div>
+
         <h1 class="h3 mb-3 fw-normal">비밀번호 변경</h1>
 
         </div>
-        <div class="form-floating">
-            <input type="text" class="form-control" placeholder="현재 비밀번호" name="cur_pwd" id="cur_pwd">
-            <label for="cur_pwd">현재 비밀번호</label>
+
+
+            <div class="form-floating">
+                <input type="password" class="form-control"id="cur_pwd" th:field="*{cur_pwd}" placeholder="현재 비밀번호"
+                       th:errorclass="field-error">
+                <label for="cur_pwd">현재 비밀번호</label>
+                <div class="field-error" th:errors="*{cur_pwd}" />
+            </div>
+
 
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control"  placeholder="새로운 비밀번호" name="new_pwd" id="new_pwd">
+            <input type="password" class="form-control" id="new_pwd" th:field="*{new_pwd}" placeholder="새로운 비밀번호"
+                   th:errorclass="field-error">
             <label for="new_pwd">새로운 비밀번호</label>
         </div>
 
+        <div class="form-floating">
+            <input type="password" class="form-control" id="ch_new_pwd" th:field="*{ch_new_pwd}" placeholder="새로운 비밀번호 확인"
+                   th:errorclass="field-error">
+            <label for="ch_new_pwd">새로운 비밀번호 확인</label>
+        </div>
         <div class="checkbox mb-3">
             <label>
                 <input type="checkbox" value="remember-me"> Remember me
@@ -45,7 +63,7 @@
         <button class="w-100 btn btn-lg btn-primary"
                 th:onclick="|location.href='@{/}'|"
                 type="submit">취소</button>
-        <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+
     </form>
 </main>
 

@@ -89,4 +89,14 @@ public class PhotoController {
        return new UrlResource("file:///"+boardService.getFullPath(filename));
     }
 
+    @GetMapping("/images/like")
+    public String img_like(@RequestParam Long id){
+        ImgBoard imgBoard=imgBoardRepository.findById(id).orElse(null);
+        if(imgBoard!=null){
+        imgBoard.setLike(imgBoard.getLike()+1);
+        imgBoardRepository.save(imgBoard);
+        }
+        return "redirect:/photo";
+    }
+
 }
