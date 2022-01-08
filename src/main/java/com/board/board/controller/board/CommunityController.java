@@ -43,7 +43,7 @@ public class CommunityController {
     @RequestMapping("/community")
     public String community(Model model){
 
-        List<Board> boards=boardRepository.findAll();
+        List<Board> boards=boardRepository.findByCate(Category.COMMU);
 
         model.addAttribute("boards",boards);
 
@@ -53,7 +53,7 @@ public class CommunityController {
     @GetMapping("/commu_form")
     public String commuForm(@RequestParam(required = false) Long id, Model model){
         CommunityFormDto commu=new CommunityFormDto();
-        if (id!=null)
+        if (id!=null) //수정
         {
             Board board=boardRepository.findById(id).orElse(null);
             if (board==null){
@@ -157,7 +157,7 @@ public class CommunityController {
 
     @GetMapping("/commu_like")
     public String commu_like(@RequestParam Long id){
-        if(id==null) return "redirect:/board/community";
+        if(id==null) return "redirect:/";
 
         Board board=boardRepository.findById(id).orElse(null);
         if(board!=null){
@@ -165,8 +165,12 @@ public class CommunityController {
 
             boardRepository.save(board);
         }
-
-        return "redirect:/board/community";
+        if(board.getCategory().equals(Category.COMMU)){
+           return "redirect:/board/community"; }
+        else if(board.getCategory().equals(Category.BOOK)){
+            return"redirect:/board/book"; }
+        else
+            return "redirect:/";
     }
 
     @PostMapping("/commu/comment")
@@ -212,5 +216,71 @@ public class CommunityController {
 
         return "redirect:/board/content";
     }
+
+    @GetMapping("/book")
+    public String book(Model model){
+        List<Board> boards=boardRepository.findByCate(Category.BOOK);
+        model.addAttribute("boards",boards);
+        return "bookboard/book";
+    }
+
+    @GetMapping("/book_form")
+    public String bookForm(@RequestParam(required = false) Long id,
+                           Model model){
+        CommunityFormDto bookFormDto=new CommunityFormDto();
+        if (id!=null)//수정
+        {
+            Board board=boardRepository.findById(id).orElse(null);
+            if (board==null){
+                return  "redirect:/board/book";
+            }
+
+            bookFormDto.setId(board.getId());
+            bookFormDto.setTitle(board.getTitle());
+            bookFormDto.setContent(board.getContent());
+
+
+        }
+
+        model.addAttribute("Form",bookFormDto);
+        return "bookboard/book_form";
+
+
+    }
+    @PostMapping("/book_form")
+    public String bookFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto,
+                               @RequestParam(required = false) Long id,
+                                BindingResult bindingResult,
+                                @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember ){
+        if(bindingResult.hasErrors()){
+            return "board/book_form";
+        }
+        if (id==null)
+        {
+            Board board=new Board();
+
+            board.setTitle(communityFormDto.getTitle());
+            board.setContent(communityFormDto.getContent());
+            board.setCategory(communityFormDto.getCategory());
+            board.setLike(0);
+            if (loginMember!=null){
+                board.setMember(loginMember);
+            }
+            boardRepository.save(board);
+        }
+        else
+        {
+            Board board=boardRepository.findById(id).orElse(null);
+            if(board==null){
+                return "redirect:/board/book";
+            }
+            board.setContent(communityFormDto.getContent());
+            board.setTitle(communityFormDto.getTitle());
+            boardRepository.save(board);
+
+        }
+        return "redirect:/board/book";
+    }
+
 
 }

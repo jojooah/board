@@ -1,5 +1,6 @@
 package com.board.board.repository;
 
+import com.board.board.constant.Category;
 import com.board.board.entity.Board;
 import com.board.board.entity.Comment;
 import com.board.board.entity.Member;
@@ -17,5 +18,8 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
 
     @Query("select b from Board b where b.like>=:like")
     List<Board> findHot(@Param("like") int like);
+
+    @Query("select b from Board b where b.category=:cate")
+    List<Board> findByCate(@Param("cate") Category cate);
 
 }

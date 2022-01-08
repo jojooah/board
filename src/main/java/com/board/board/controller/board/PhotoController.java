@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
@@ -87,6 +88,37 @@ public class PhotoController {
     @GetMapping("/images/{filename}")
     public Resource Image(@PathVariable String filename) throws MalformedURLException {
        return new UrlResource("file:///"+boardService.getFullPath(filename));
+
+    }
+
+    @GetMapping("/images/delete/{filename}/{id}")
+    public String img_delete(@PathVariable String filename,
+                           @PathVariable Long id){
+
+
+        ImgBoard imgBoard=imgBoardRepository.findById(id).orElse(null);
+
+        if (imgBoard!=null) {
+            List<Img> imgs = imgBoard.getImgs();
+            for (Img img : imgs) {
+                imgRepository.delete(img);
+            }
+            imgBoardRepository.delete(imgBoard);
+
+            String path = boardService.getFullPath(filename);//현재 게시판에 존재하는 파일객체를 만듬
+
+            File file = new File(path);
+            if(file.exists()) { // 파일이 존재하면 파일 삭제
+
+
+                file.delete();
+
+            }
+        }
+
+
+        return "redirect:/photo";
+
     }
 
     @GetMapping("/images/like")

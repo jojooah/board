@@ -34,6 +34,10 @@
                            th:classappend="${menu}=='commu'?' active'">자유게시판</a>
                     </li>
                     <li class="nav-item" >
+                        <a class="nav-link" th:onclick="|location.href='@{/board/book}'|"
+                           th:classappend="${menu}=='commu'?' active'">독후감게시판</a>
+                    </li>
+                    <li class="nav-item" >
                         <a class="nav-link" th:onclick="|location.href='@{/hot}'|"
                            th:classappend="${menu}=='hot'?' active'">핫게시판</a>
                     </li>
