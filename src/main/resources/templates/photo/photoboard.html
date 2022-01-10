@@ -8,28 +8,28 @@
 
 <main class="container">
     <a type="button" class="btn btn-warning" th:href="@{/photo/photo_form}">글쓰기</a></br>
-    <div th:each="imgBoard:${imgBoards}" class="card" style="width: 18rem;">
+    <div th:each="imgBoard:${imgBoards}" class="card" style="width: 18rem; display: inline-block">
 
-            <div th:each="img:${imgBoard.Imgs}" class="card" style="width: 18rem;">
-                <a href="#">
-                    <img th:src="|/photo/images/${img.savedUrl}|" class="card-img-top" alt="..." ></a>
+        <div th:each="img:${imgBoard.Imgs}" class="card" style="width: 18rem;">
 
-        <div class="card-body">
-            <p class="card-text" th:text="${imgBoard.title}"></p>
-            <p class="card-text" th:text="${imgBoard.content}"></p>
-            <a type="button" class="btn btn-warning" th:href="@{/photo/images/like(id=${imgBoard.id})}"
-            th:text="|좋아요 ${imgBoard.like}|"></a></br>
-            <span  th:each="img:${imgBoard.Imgs}">
-                <a type="button" class="btn btn-warning" th:href="|/photo/images/delete/${img.savedUrl}/${imgBoard.id}|"
-                   th:text="삭제"></a></br>
-            </span>
+            <a href="#">
+                <img th:src="|/photo/images/${img.savedUrl}|" class="card-img-top" alt="..." ></a>
 
+                <div class="card-body" >
+                    <p class="card-text" th:text="${imgBoard.title}"></p>
+                    <p class="card-text" th:text="${imgBoard.content}"></p>
+                    <a type="button" class="btn btn-warning" th:href="@{/photo/images/like(id=${imgBoard.id})}"
+                    th:text="|좋아요 ${imgBoard.like}|"></a>
 
-
+                    <span th:if="${imgBoard.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==imgBoard.member.id}">
+                      <span  th:each="img:${imgBoard.Imgs}">
+                        <a type="button" class="btn btn-warning" th:href="|/photo/images/delete/${img.savedUrl}/${imgBoard.id}|"
+                           th:text="삭제"></a></br>
+                      </span>
+                    </span>
+                </div>
 
         </div>
-
-    </div>
     </div>
 
 </main>

@@ -7,7 +7,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
 
 <main class="container">
-    <span>총 건수:<span th:text ="${#lists.size(boards)}"}></span>
+    <span>총 건수:<span th:text ="${boards.totalElements}"}></span>
     <table class="table">
         <thead>
         <tr>
@@ -29,6 +29,22 @@
         </tbody>
     </table>
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form}">글쓰기</a>
+
+        <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+                <li class="page-item"th:classappend="${1==boards.pageable.pageNumber+1}?'disabled'" >
+                  <a class="page-link" th:href="@{/board/community(page=${boards.pageable.pageNumber-1})}">Previous</a>
+                </li>
+                    <li class="page-item" th:each="i:${#numbers.sequence(startPage,endPage)}"
+                        th:classappend="${i==boards.pageable.pageNumber+1}?'disabled'">
+                        <a class="page-link" href="#" th:href="@{/board/community(page=${i-1})}" th:text="${i}">1</a></li>
+
+
+                    <li class="page-item" th:classappend="${boards.totalPages==boards.pageable.pageNumber+1}?'disabled'">
+                    <a class="page-link" href="#"  th:href="@{/board/community(page=${boards.pageable.pageNumber+1})}">Next</a>
+                </li>
+              </ul>
+    </nav>
 </main>
 
 

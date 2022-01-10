@@ -5,6 +5,8 @@ import com.board.board.entity.Board;
 import com.board.board.entity.Comment;
 import com.board.board.entity.Member;
 import org.hibernate.annotations.Parameter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +22,6 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findHot(@Param("like") int like);
 
     @Query("select b from Board b where b.category=:cate")
-    List<Board> findByCate(@Param("cate") Category cate);
+    Page<Board> findByCate(@Param("cate") Category cate, Pageable pageable);
 
 }

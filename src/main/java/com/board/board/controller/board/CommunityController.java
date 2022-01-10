@@ -17,6 +17,10 @@ import com.board.board.service.BoardService;
 import com.board.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,10 +45,14 @@ public class CommunityController {
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
     @RequestMapping("/community")
-    public String community(Model model){
+    public String community(Model model, @PageableDefault(size = 10) Pageable pageable){
 
-        List<Board> boards=boardRepository.findByCate(Category.COMMU);
+        Page<Board> boards=boardRepository.findByCate(Category.COMMU,pageable);
+        int startPage= Math.max(1,boards.getPageable().getPageNumber()-4);
+        int endPage=Math.min(boards.getTotalPages(),boards.getPageable().getPageNumber()+4);
 
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
         model.addAttribute("boards",boards);
 
         return "board/community";
@@ -182,7 +190,8 @@ public class CommunityController {
         }
         Board board=boardRepository.findById(id).orElse(null);
         if (board == null){
-            return "redirect:/board/community";
+
+            return "redirect:/";
         }
 
         log.info(commentDto.getContent());
@@ -219,7 +228,7 @@ public class CommunityController {
 
     @GetMapping("/book")
     public String book(Model model){
-        List<Board> boards=boardRepository.findByCate(Category.BOOK);
+        Page<Board> boards=boardRepository.findByCate(Category.BOOK,PageRequest.of(0,20));
         model.addAttribute("boards",boards);
         return "bookboard/book";
     }
@@ -241,7 +250,7 @@ public class CommunityController {
 
 
         }
-
+        bookFormDto.setCategory(Category.BOOK);
         model.addAttribute("Form",bookFormDto);
         return "bookboard/book_form";
 
