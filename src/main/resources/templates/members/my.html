@@ -7,15 +7,18 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
 
 <main class="container">
-    <div th:object="${member}">
+    <div th:object="${member}" >
+        <div style="text-align: center;">
 
-        <div th:text="${member.email}"></div>
-        <div th:text="${member.name}"></div>
-        <div th:text="${member.level}"></div>
-        <a th:href="|@{/members/myBoard}|">내가 쓴 글 보기</a></br>
-        <a th:href="|@{/members/myComment}|">내가 쓴 댓글 보기</a></br>
-        <a th:href="|@{/members/myScrap}|">내가 스크랩한 글 보기</a></br>
-        <a th:href="|@{/members/changePwd}|">비번 바꾸기</a></br>
+            <div th:text="${member.email}"></div>
+            <div th:text="${member.name}"></div>
+            <div th:text="${member.level}"></div>
+            <a type="button" class="btn btn-outline-info"th:href="|@{/members/myBoard}|">내가 쓴 글 보기</a>
+            <a type="button" class="btn btn-outline-info"th:href="|@{/members/myComment}|">내가 쓴 댓글 보기</a>
+            <a type="button" class="btn btn-outline-info"th:href="|@{/members/myScrap}|">내가 스크랩한 글 보기</a>
+            <a type="button" class="btn btn-outline-info"th:href="|@{/members/changePwd}|">비번 바꾸기!</a>
+
+        </div>
     </div>
 
 

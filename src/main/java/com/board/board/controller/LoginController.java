@@ -142,24 +142,38 @@ public class LoginController {
 
     @GetMapping("/my")
     public String my(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
+
+        if (loginMember==null){
+          return "redirect:/members/login";
+        }
         model.addAttribute("member",loginMember);
         return "members/my";
     }
     @GetMapping("/myBoard")
     public String myBoard(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+
+        if (loginMember==null){
+            return "redirect:/members/login";
+        }
+
         List<Board> boards=loginMember.getBoards();
 
         int size=boards.size();
 
         model.addAttribute("boards",boards);
-
+        model.addAttribute("member",loginMember);
         return "members/myBoards";
     }
     @GetMapping("/myComment")
     public String myComments(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+        if (loginMember==null){
+            return "redirect:/members/login";
+        }
+
         List<Comment> comments=commentRepository.findComments(loginMember);
         log.info("size={}",comments.size());
         model.addAttribute("comments",comments);
+        model.addAttribute("member",loginMember);
         return "members/myComments";
     }
 
@@ -199,7 +213,9 @@ public class LoginController {
                         @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember)
 
     {
-
+        if (loginMember==null){
+            return "redirect:/members/login";
+        }
         BoardScrap boardScrap=new BoardScrap();
         Board board=boardRepository.findById(id).orElse(null);
         boardScrap.setBoard(board);
@@ -211,11 +227,11 @@ public class LoginController {
 
     @GetMapping("/myScrap")
     public String myScrap( @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
-       log.info("1");
+
         List<BoardScrap> boards=boardScrapRepository.findBoard(loginMember);
-        log.info("2");
+
         model.addAttribute("boards",boards);
-        log.info("3");
+        model.addAttribute("member",loginMember);
         return "members/myScrapboard";
 
     }
