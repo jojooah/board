@@ -19,7 +19,7 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board,Long> {
 
     @Query("select b from Board b where b.like>=:like")
-    List<Board> findHot(@Param("like") int like);
+    Page<Board> findHot(@Param("like") int like,Pageable pageable);
 
     @Query("select b from Board b where b.category=:cate")
     Page<Board> findByCate(@Param("cate") Category cate, Pageable pageable);

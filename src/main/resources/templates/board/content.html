@@ -1,6 +1,25 @@
 <!doctype html>
 
 <html >
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script >
+
+    function doLike(Id){
+        $.get(
+            '/board/commu_like',
+            {
+                id:Id
+            },
+            function (data){
+                var targ=document.getElementById("like");
+
+                $(targ).empty().append(data);
+
+            }
+        )
+    }
+
+</script>
 <head th:replace="fragments/common :: head('자유게시판')">
 </head>
 <body>
@@ -19,9 +38,12 @@
     <span th:if="${board.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==board.member.id}">
 
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
-    <a type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
+    <a name="like" type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
     </span>
-    <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}">좋아요</a>
+   <!-- <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}" th:text="|좋아요 ${board.like}|">좋아요</a> -->
+
+    <a type="button" th:onclick="|doLike('${board.id}')|" class="btn btn-warning">좋아요
+        <span id="like" th:text=" ${board.like}"></span></a>
     <span class="nav-item me-2" th:if="${session.loginMember != null}">
         <a type="button" class="btn btn-warning" th:href="@{/members/scrap(id=${board.id})}">스크랩</a>
     </span>
@@ -64,11 +86,11 @@
 
 
 
-<form th:action="@{/board/commu/comment(id=${board.id})}" method="post">
+<form th:action="@{/board/commu/comment(id=${board.id})}"th:object="${commentForm}" method="post">
 <div class="card-header bg-light">
     <i class="fa fa-comment fa"></i> REPLY
 </div>
-<div class="card-body" th:object="${commentForm}" >
+<div class="card-body"  >
     <ul class="list-group list-group-flush">
         <li class="list-group-item">
 
@@ -80,6 +102,14 @@
 </div>
 </form>
 </div>
+<!--  <form action="" th:action="@{/board/commu_form}" th:object="${Form}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+<div class="form-floating">
+    <textarea class="form-control" placeholder="Leave a comment here" th:field="*{title}" th:errorclass="field-error"></textarea>
+    <label for="title">제목</label>
+     <div class="field-error" th:errors="*{title}" />
+</div></br>-->
 
 
 <!-- Optional JavaScript; choose one of the two! -->

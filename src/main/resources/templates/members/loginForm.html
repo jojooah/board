@@ -31,24 +31,19 @@
         <div class="form-floating">
             <input type="text" class="form-control"id="loginId" th:field="*{email}" placeholder="name@example.com"
                    th:errorclass="field-error">
-            <label for="loginId">Email address</label>
+            <label for="loginId">이메일</label>
             <div class="field-error" th:errors="*{email}" />
         </div>
         <div class="form-floating">
             <input type="password" class="form-control"  id="password" th:field="*{password}" placeholder="Password"
                    th:errorclass="field-error">
-            <label for="password">Password</label>
+            <label for="password">비밀번호</label>
             <div class="field-error" th:errors="*{password}" />
         </div>
 
-        <div class="checkbox mb-3">
-
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">로그인</button>
+       <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">로그인</button>
         <a type="button" class="w-100 btn btn-lg btn-primary" th:href="|@{/members/findPwd}|">비밀번호 찾기</a>
-        <button class="w-100 btn btn-lg btn-primary"
-                th:onclick="|location.href='@{/login_index}'|"
-                type="submit">취소</button><th: br/>
+
 
     </form>
 </main>

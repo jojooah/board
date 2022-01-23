@@ -1,12 +1,14 @@
 package com.board.board.controller.board;
 
 import com.board.board.Dto.PhotoDto;
+import com.board.board.constant.Level;
 import com.board.board.constant.SessionConst;
 import com.board.board.entity.Img;
 import com.board.board.entity.ImgBoard;
 import com.board.board.entity.Member;
 import com.board.board.repository.ImgBoardRepository;
 import com.board.board.repository.ImgRepository;
+import com.board.board.repository.MemberRepository;
 import com.board.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class PhotoController {
     private final BoardService boardService;
     private final ImgBoardRepository imgBoardRepository;
     private final ImgRepository imgRepository;
+    private final MemberRepository memberRepository;
 
     @RequestMapping
     public String photo(Model model, HttpServletRequest request){
@@ -79,6 +82,14 @@ public class PhotoController {
         imgRepository.save(img);
 
         log.info(storedFileName);
+
+        if(loginMember.getLevel()==Level.level1){
+            loginMember.setLevel(Level.level2);
+        }
+        else if(loginMember.getLevel()==Level.level2){
+            loginMember.setLevel(Level.level3);
+        }
+        memberRepository.save(loginMember);
 
 
         return "redirect:/photo";

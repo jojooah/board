@@ -164,39 +164,46 @@ public class CommunityController {
     }
 
     @GetMapping("/commu_like")
-    public String commu_like(@RequestParam Long id){
-        if(id==null) return "redirect:/";
+    @ResponseBody
+    public int commu_like(@RequestParam Long id){
+        //if(id==null) return "redirect:/";
 
+        int like=0;
         Board board=boardRepository.findById(id).orElse(null);
         if(board!=null){
             board.setLike(board.getLike()+1);
 
             boardRepository.save(board);
+            like=board.getLike();
         }
-        if(board.getCategory().equals(Category.COMMU)){
-           return "redirect:/board/community"; }
-        else if(board.getCategory().equals(Category.BOOK)){
-            return"redirect:/board/book"; }
-        else
-            return "redirect:/";
+    //    if(board.getCategory().equals(Category.COMMU)){
+     //      return "redirect:/board/community"; }
+       // else if(board.getCategory().equals(Category.BOOK)){
+        //    return"redirect:/board/book"; }
+        //else
+          //  return "redirect:/";
+        return like;
     }
 
     @PostMapping("/commu/comment")
-    public String comment(@Valid @ModelAttribute CommentDto commentDto, BindingResult bindingResult, @RequestParam Long id,
+    public String comment(@Valid @ModelAttribute CommentDto commentForm, BindingResult bindingResult, @RequestParam Long id,
                           @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember,
-                          RedirectAttributes redirectAttributes){
+                          RedirectAttributes redirectAttributes,Model model){
+
+        Board board=boardRepository.findById(id).orElse(null);
         if (bindingResult.hasErrors()){
+            model.addAttribute("board",board);
             return "board/content";
         }
-        Board board=boardRepository.findById(id).orElse(null);
+
         if (board == null){
 
             return "redirect:/";
         }
 
-        log.info(commentDto.getContent());
+        log.info(commentForm.getContent());
         Comment comment=new Comment();
-        comment.setContent(commentDto.getContent());
+        comment.setContent(commentForm.getContent());
         comment.setBoard(board);
         comment.setMember(loginMember);
         commentRepository.save(comment);
@@ -227,9 +234,17 @@ public class CommunityController {
     }
 
     @GetMapping("/book")
-    public String book(Model model){
-        Page<Board> boards=boardRepository.findByCate(Category.BOOK,PageRequest.of(0,20));
+    public String book(Model model, @PageableDefault(size = 10) Pageable pageable){
+
+        Page<Board> boards=boardRepository.findByCate(Category.BOOK,pageable);
+        int startPage= Math.max(1,boards.getPageable().getPageNumber()-4);
+        int endPage=Math.min(boards.getTotalPages(),boards.getPageable().getPageNumber()+4);
+
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
         model.addAttribute("boards",boards);
+
+
         return "bookboard/book";
     }
 

@@ -15,7 +15,7 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:fragment="menu(menu)">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="menu(menu)">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,18 +26,16 @@
                         <a class="nav-link" aria-current="page" th:href="@{/}"
                            th:classappend="${menu}=='home'?'active'">츄라이츄라이</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
+
                     <li class="nav-item" >
                         <a class="nav-link" th:onclick="|location.href='@{/board/community}'|"
                            th:classappend="${menu}=='commu'?' active'">자유게시판</a>
                     </li>
                     <li class="nav-item" >
                         <a class="nav-link" th:onclick="|location.href='@{/board/book}'|"
-                           th:classappend="${menu}=='commu'?' active'">독후감게시판</a>
+                           th:classappend="${menu}=='book'?' active'">독후감게시판</a>
                     </li>
-                    <li class="nav-item" >
+                    <li th:if="${session.loginMember != null and session.loginMember.level == T(com.board.board.constant.Level).level3}" class="nav-item" >
                         <a class="nav-link" th:onclick="|location.href='@{/hot}'|"
                            th:classappend="${menu}=='hot'?' active'">핫게시판</a>
                     </li>
