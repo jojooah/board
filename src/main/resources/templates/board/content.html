@@ -4,26 +4,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script >
 
-    function doLike(Id){
-        $.get(
-            '/board/commu_like',
-            {
-                id:Id
-            },
-            function (data){
-                var targ=document.getElementById("like");
+    function doLike(Id,c,like){
+        if(like==1) {
+            $.get(
+                '/board/commu_like',
+                {
+                    id: Id
+                }
+            )
 
-                $(targ).empty().append(data);
 
-            }
-        )
+            var targ = document.getElementById("like");
+            var cnt = parseInt(c);
+            var btn=document.getElementById("like_b");
+            btn.disabled='true';
+            $(targ).empty().append(cnt + 1);
+
+
+        }
+        if(like==3){
+            alert('이미 좋아요한 게시물이에요!')
+        }
+        if(like==2){
+            alert('로그인해주세요')
+        }
     }
 
 </script>
 <head th:replace="fragments/common :: head('자유게시판')">
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu(${title})"></nav>
 
 <main class="container">
  <div th:object="${board}">
@@ -34,7 +45,7 @@
 
  </div>
 
-    <a type="button" class="btn btn-warning" th:href="@{/board/community}">목록</a>
+
     <span th:if="${board.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==board.member.id}">
 
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
@@ -42,8 +53,8 @@
     </span>
    <!-- <a type="button" class="btn btn-warning" th:href="@{/board/commu_like(id=${board.id})}" th:text="|좋아요 ${board.like}|">좋아요</a> -->
 
-    <a type="button" th:onclick="|doLike('${board.id}')|" class="btn btn-warning">좋아요
-        <span id="like" th:text=" ${board.like}"></span></a>
+    <button id="like_b"  th:onclick="|doLike('${board.id}','${board.like}','${like}')|" class="btn btn-warning">좋아요
+        <span id="like" th:text=" ${board.like}"></span></button>
     <span class="nav-item me-2" th:if="${session.loginMember != null}">
         <a type="button" class="btn btn-warning" th:href="@{/members/scrap(id=${board.id})}">스크랩</a>
     </span>

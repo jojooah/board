@@ -5,14 +5,8 @@ import com.board.board.Dto.CommunityFormDto;
 import com.board.board.Dto.ReCommentDto;
 import com.board.board.constant.Category;
 import com.board.board.constant.SessionConst;
-import com.board.board.entity.Board;
-import com.board.board.entity.Comment;
-import com.board.board.entity.Member;
-import com.board.board.entity.ReComment;
-import com.board.board.repository.BoardRepository;
-import com.board.board.repository.CommentRepository;
-import com.board.board.repository.MemberRepository;
-import com.board.board.repository.ReCommentRepository;
+import com.board.board.entity.*;
+import com.board.board.repository.*;
 import com.board.board.service.BoardService;
 import com.board.board.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +38,8 @@ public class CommunityController {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
+    private final MemberLikeRepository memberLikeRepository;
+
     @RequestMapping("/community")
     public String community(Model model, @PageableDefault(size = 10) Pageable pageable){
 
@@ -115,13 +111,19 @@ public class CommunityController {
     }
 
     @GetMapping("/content")
-    public String content(@RequestParam Long id, Model model){
+    public String content(@RequestParam Long id, Model model,
+                          @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember){
         if(id==null){ return "redirect:/board/community";}
 
+
         Board board=boardRepository.findById(id).orElse(null);
+
+
         List<Comment> comments = board.getComments();
         CommentDto commentDto=new CommentDto();
         ReCommentDto reCommentDto=new ReCommentDto();
+
+
         if(board==null){
             return "redirect:/board/community";
 
@@ -131,7 +133,29 @@ public class CommunityController {
             model.addAttribute("comments",comments);
             model.addAttribute("commentForm",commentDto);
             model.addAttribute("recommentForm",reCommentDto);
-            log.info("츄라이츄라이");
+            if(board.getCategory().equals(Category.COMMU)){
+                model.addAttribute("title","commu");
+            }
+            else if(board.getCategory().equals(Category.BOOK)){
+                model.addAttribute("title","book");
+            }
+
+
+
+            if(loginMember != null){
+                MemberLike memberLike=memberLikeRepository.findLike(board,loginMember).orElse(null);
+                if (memberLike != null){
+                    model.addAttribute("like",3); //이미 좋아요 눌렀어요
+                }
+                else{
+                    model.addAttribute("like",1);//좋아요가능
+                }
+            }
+            else{
+                model.addAttribute("like",2);//로그인해주세요
+            }
+
+
             return "board/content";
         }
 
@@ -165,24 +189,25 @@ public class CommunityController {
 
     @GetMapping("/commu_like")
     @ResponseBody
-    public int commu_like(@RequestParam Long id){
+    public void commu_like(@RequestParam Long id,
+                          @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember){
         //if(id==null) return "redirect:/";
+
 
         int like=0;
         Board board=boardRepository.findById(id).orElse(null);
-        if(board!=null){
-            board.setLike(board.getLike()+1);
 
+
+        if(board!=null && loginMember != null){
+            MemberLike memberLike=new MemberLike();
+            board.setLike(board.getLike()+1);
+            memberLike.setMember(loginMember);
+            memberLike.setBoard(board);
+            memberLikeRepository.save(memberLike);
             boardRepository.save(board);
-            like=board.getLike();
+
         }
-    //    if(board.getCategory().equals(Category.COMMU)){
-     //      return "redirect:/board/community"; }
-       // else if(board.getCategory().equals(Category.BOOK)){
-        //    return"redirect:/board/book"; }
-        //else
-          //  return "redirect:/";
-        return like;
+
     }
 
     @PostMapping("/commu/comment")
@@ -272,8 +297,8 @@ public class CommunityController {
 
     }
     @PostMapping("/book_form")
-    public String bookFormPost(@Valid @ModelAttribute CommunityFormDto communityFormDto,
-                               @RequestParam(required = false) Long id,
+    public String bookFormPost(@RequestParam(required = false) Long id,
+                               @Valid @ModelAttribute CommunityFormDto communityFormDto,
                                 BindingResult bindingResult,
                                 @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember ){
         if(bindingResult.hasErrors()){
@@ -285,7 +310,7 @@ public class CommunityController {
 
             board.setTitle(communityFormDto.getTitle());
             board.setContent(communityFormDto.getContent());
-            board.setCategory(communityFormDto.getCategory());
+            board.setCategory(Category.BOOK);
             board.setLike(0);
             if (loginMember!=null){
                 board.setMember(loginMember);

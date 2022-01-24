@@ -1,10 +1,11 @@
 <!doctype html>
 
 <html >
-<head th:replace="fragments/common :: head('자유게시판')">
+
+<head th:replace="fragments/common :: head('사진게시판')">
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('photo')"></nav>
 
 <main class="container">
     <a type="button" class="btn btn-outline-info" th:href="@{/photo/photo_form}">글쓰기</a></br>
@@ -18,7 +19,7 @@
                 <div class="card-body" >
                     <p class="card-text" th:text="${imgBoard.title}"></p>
                     <p class="card-text" th:text="${imgBoard.content}"></p>
-                    <a type="button"class="btn btn-outline-info" th:href="@{/photo/images/like(id=${imgBoard.id})}"
+                    <a class="btn btn-outline-info" th:href="@{/photo/images/like(id=${imgBoard.id})}"
                     th:text="|좋아요 ${imgBoard.like}|"></a>
 
                     <span th:if="${imgBoard.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==imgBoard.member.id}">
