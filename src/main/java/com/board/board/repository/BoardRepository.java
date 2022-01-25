@@ -24,4 +24,6 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     @Query("select b from Board b where b.category=:cate")
     Page<Board> findByCate(@Param("cate") Category cate, Pageable pageable);
 
+    @Query("select b from Board b where b.member=:member")
+    List<Board>findByMember(@Param("member")Member member);
 }

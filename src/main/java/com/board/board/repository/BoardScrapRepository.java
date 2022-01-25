@@ -16,4 +16,7 @@ public interface BoardScrapRepository extends JpaRepository<BoardScrap, Long> {
     @Query("select b from BoardScrap b where b.member=:member")
     List<BoardScrap> findBoard(@Param("member") Member member);
 
+    @Query("select b from BoardScrap b where b.board=:board")
+    List<BoardScrap> findByBoard(@Param("board") Board board);
+
 }

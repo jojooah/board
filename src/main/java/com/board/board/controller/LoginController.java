@@ -156,9 +156,8 @@ public class LoginController {
             return "redirect:/members/login";
         }
 
-        List<Board> boards=loginMember.getBoards();
+        List<Board> boards=boardRepository.findByMember(loginMember);
 
-        int size=boards.size();
 
         model.addAttribute("boards",boards);
         model.addAttribute("member",loginMember);
@@ -221,7 +220,7 @@ public class LoginController {
         boardScrap.setBoard(board);
         boardScrap.setMember(loginMember);
         boardScrapRepository.save(boardScrap);
-        return"redirect:/";
+        return"redirect:/members/myScrap";
     }
 
 

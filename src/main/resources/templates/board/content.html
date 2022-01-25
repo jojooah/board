@@ -46,7 +46,7 @@
  </div>
 
 
-    <span th:if="${board.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==board.member.id}">
+    <span th:if="(${session.loginMember}!=NULL and ${session.loginMember.role == T(com.board.board.constant.Role).ADMIN})or (${board.member}!=NULL and ${session.loginMember}!=NULL and ${session.loginMember.id==board.member.id})">
 
     <a type="button" class="btn btn-warning" th:href="@{/board/commu_form(id=${board.id})}">수정</a>
     <a name="like" type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a>
@@ -83,7 +83,7 @@
             </li>
         </ul>
 
-        <form th:action="@{/board/commu/recomment/(id=${comment.id},contentId=${board.id})}" method="post">
+        <form th:action="@{/board/commu/recomment/(id=${comment.id},contentId=${board.id})}" method="post" onsubmit="return commentCheck(this);">
             <div class="card-body" th:object="${recommentForm}" >
                 <input type="text" class="form-control"  rows="3" th:field="*{content}" th:errorclass="field-error"></input>
                 <div class="field-error" th:errors="*{content}" /></div>
@@ -96,8 +96,19 @@
 
 
 
+<script>
 
-<form th:action="@{/board/commu/comment(id=${board.id})}"th:object="${commentForm}" method="post">
+    function commentCheck(form){
+        if(form.content.value.length==0){
+            alert("댓글을 입력해 주세요");
+            return false;
+        }
+        else{
+          return true;
+        }
+    }
+</script>
+<form th:action="@{/board/commu/comment(id=${board.id})}"th:object="${commentForm}" method="post" onsubmit="return commentCheck(this);">
 <div class="card-header bg-light">
     <i class="fa fa-comment fa"></i> REPLY
 </div>

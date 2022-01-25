@@ -39,6 +39,7 @@ public class CommunityController {
     private final CommentRepository commentRepository;
     private final ReCommentRepository reCommentRepository;
     private final MemberLikeRepository memberLikeRepository;
+    private final BoardScrapRepository boardScrapRepository;
 
     @RequestMapping("/community")
     public String community(Model model, @PageableDefault(size = 10) Pageable pageable){
@@ -91,6 +92,7 @@ public class CommunityController {
             board.setContent(communityFormDto.getContent());
             board.setCategory(Category.COMMU);
             board.setLike(0);
+            board.setUpdateTime(LocalDateTime.now());
             if (loginMember!=null){
                 board.setMember(loginMember);
             }
@@ -169,6 +171,8 @@ public class CommunityController {
 
         if(board!=null){
             List<Comment> comments=commentRepository.findByBoard(board);
+            List<MemberLike> likes=memberLikeRepository.findByBoard(board);
+            List<BoardScrap> scraps=boardScrapRepository.findByBoard(board);
 
             for (Comment comment:comments){
 
@@ -179,7 +183,19 @@ public class CommunityController {
                 commentRepository.delete(comment);
             }
 
+            for(MemberLike like:likes){
+                memberLikeRepository.delete(like);
+            }
+
+
+            for(BoardScrap scrap:scraps){
+                boardScrapRepository.delete(scrap);
+            }
+
+
             boardRepository.delete(board);
+
+
 
         }
 
@@ -312,6 +328,7 @@ public class CommunityController {
             board.setContent(communityFormDto.getContent());
             board.setCategory(Category.BOOK);
             board.setLike(0);
+            board.setUpdateTime(LocalDateTime.now());
             if (loginMember!=null){
                 board.setMember(loginMember);
             }

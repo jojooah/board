@@ -15,8 +15,8 @@
             <th scope="col">글번호</th>
             <th scope="col">좋아요</th>
             <th scope="col">글제목</th>
-             <th scope="col">카테고리</th>
-           <!-- <th scope="col">댓글 수</th>-->
+            <th scope="col">카테고리</th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -26,7 +26,9 @@
             <td th:text="${board.like}" >Otto</td>
             <td><a style="text-decoration: none; color:inherit;" th:text="${board.title}" th:href="@{/board/content(id=${board.id})}">@mdo</a></td>
              <td th:text="${board.Category}" >Otto</td>
-
+            <span th:if="(${session.loginMember}!=NULL and ${session.loginMember.role ==T(com.board.board.constant.Role).ADMIN })">
+            <td><a type="button" class="btn btn-warning" th:href="@{/board/commu_delete(id=${board.id})}">삭제</a></td>
+             </span>
         </tr>
 
         </tbody>
