@@ -40,7 +40,7 @@
                         <a class="nav-link" th:onclick="|location.href='@{/hot}'|"
                            th:classappend="${menu}=='hot'?' active'">핫게시판</a>
                     </li>
-                    <li th:if="${session.loginMember != null}" class="nav-item" >
+                    <li class="nav-item" >
                         <a class="nav-link" th:onclick="|location.href='@{/photo}'|"
                            th:classappend="${menu}=='photo'?' active'">사진방</a>
                     </li>

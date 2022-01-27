@@ -37,9 +37,7 @@ public class PhotoController {
     public String photo(Model model,
                         @SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember){
 
-        if (loginMember==null){
-            return "redirect:members/login";
-        }
+
         List<ImgBoard> imgBoards=imgBoardRepository.findAll();
       //  List<Img> imgs=imgRepository.findAll();
       //  model.addAttribute("imgs",imgs);
@@ -67,7 +65,12 @@ public class PhotoController {
         imgBoard.setContent(photoDto.getContent());
         imgBoard.setTitle(photoDto.getTitle());
         imgBoard.setUpdateTime(LocalDateTime.now());
-        imgBoard.setMember(loginMember);
+        if(loginMember==null){
+            imgBoard.setMember(null);
+        }
+        else {
+            imgBoard.setMember(loginMember);
+        }
         imgBoard.setLike(0);
         imgBoardRepository.save(imgBoard);
 
@@ -76,14 +79,16 @@ public class PhotoController {
         img.setOriginUrl(photoDto.getImg().getOriginalFilename());
         img.setSavedUrl(storedFileName);
         imgRepository.save(img);
+        if(loginMember!=null){
+            if(loginMember.getLevel()==Level.level1){
+                loginMember.setLevel(Level.level2);
+            }
+            else if(loginMember.getLevel()==Level.level2){
+                loginMember.setLevel(Level.level3);
+            }
+            memberRepository.save(loginMember);
+        }
 
-        if(loginMember.getLevel()==Level.level1){
-            loginMember.setLevel(Level.level2);
-        }
-        else if(loginMember.getLevel()==Level.level2){
-            loginMember.setLevel(Level.level3);
-        }
-        memberRepository.save(loginMember);
 
 
         return "redirect:/photo";
