@@ -1,13 +1,30 @@
 <!doctype html>
 
 <html >
+<script>
+
+    function formCheck(form){
+
+            if(form.title.value.length==0){
+                alert("제목을 입력해 주세요");
+                return false;
+            }
+            if(form.content.value.length==0){
+                alert("내용을 입력해 주세요");
+                return false;
+            }
+            return true;
+
+    }
+
+</script>
 <head th:replace="fragments/common :: head('자유게시판')">
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" th:replace="fragments/common :: menu('commu')"></nav>
 
 <main class="container">
-    <form action="" th:action="@{/board/commu_form}" th:object="${Form}" method="post">
+    <form action="" th:action="@{/board/commu_form}" th:object="${Form}" method="post"onsubmit="return formCheck(this);">
         <input type="hidden" th:field="*{id}">
 
     <div class="form-floating">
