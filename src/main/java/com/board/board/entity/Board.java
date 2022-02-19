@@ -1,22 +1,24 @@
 package com.board.board.entity;
 
 import com.board.board.constant.Category;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter@Setter@ToString
-public class Board {
+@Getter
+@Setter
+@ToString
+@Table(name = "board")
+public class Board implements Serializable {
     @Id
-    @Column(name="board_id")
+    @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -30,14 +32,12 @@ public class Board {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name="member_id")
-    @JsonBackReference
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "board")
-    @JsonManagedReference
-    private List<Comment> comments=new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
-    @Column(name="like_")
+    @Column(name = "like_")
     private int like;
 }

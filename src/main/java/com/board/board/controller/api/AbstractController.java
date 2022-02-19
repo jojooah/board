@@ -26,6 +26,13 @@ public class AbstractController {
         return resultMap;
     }
 
+    protected Map<String, Object> resultMapCodeAndMsg(Result result) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", result.getResultCode().getCode());
+        resultMap.put("msg", result.getResultCode().getMessage());
+        return resultMap;
+    }
+
     protected String resultString(Result result) {
         return resultJSON(result).toString();
     }

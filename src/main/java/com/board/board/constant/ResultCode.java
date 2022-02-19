@@ -7,7 +7,8 @@ public enum ResultCode {
 
     //유저 관련 에러 100번대
     NOT_ALLOW_USER(100, "허가되지 않은 유저입니다."),
-    UNKNOWN_USER(101, "알 수 없는 유저입니다."),
+    UNKNOWN_USER(101, "존재하지 않는 유저입니다."),
+    PASSWORD_NOT_CORRECT(102, "비밀번호가 일치하지 않습니다."),
 
 
 

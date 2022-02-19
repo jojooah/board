@@ -15,6 +15,10 @@ public class Result<T> {
         return resultObject;
     }
 
+    public T removeResultObject(){
+        return resultObject;
+    }
+
     public ResultCode getResultCode() {
         return resultCode;
     }

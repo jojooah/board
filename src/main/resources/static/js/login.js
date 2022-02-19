@@ -23,11 +23,21 @@ $login = {
     },
 
     callback: function (response) {
-        console.log(response);
+        var json = JSON.parse(response);
+        if (json['code'] == 0) {
+            window.location.href = '/';
+        } else {
+            if (json['msg'] == '') {
+                alert('시스템 오류입니다.');
+            } else {
+                alert(json['msg']);
+            }
+        }
+
     },
 
     errCallback: function (response) {
-        console.error(response);
+        alert('시스템 오류입니다.');
     }
 
 

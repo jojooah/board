@@ -38,21 +38,16 @@ public class MemberService {
     }
 
     public Result<Member> login(LoginFormDto loginFormDto) {
-        Optional<Member> optionalMember = memberRepository.findById(10L);
-        if (optionalMember.isEmpty()) {
-            return ResultCode.UNKNOWN_USER.result(null);
-        }
-        Member member = optionalMember.get();
-
-
-        /*Optional<Member> optionalMember = memberRepository.findByEmail(loginFormDto.getEmail());
+        Optional<Member> optionalMember = memberRepository.findByEmail(loginFormDto.getEmail());
         if (optionalMember.isEmpty()) {
             return ResultCode.UNKNOWN_USER.result();
         }
-        Member member = optionalMember.get();*/
+        Member member = optionalMember.get();
+        if (!member.getPassword().equals(loginFormDto.getPassword())) {
+            return ResultCode.PASSWORD_NOT_CORRECT.result();
+        }
 
-
-        return ResultCode.Success.result(null);
+        return ResultCode.Success.result(member);
     }
 
 }
