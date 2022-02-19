@@ -1,5 +1,6 @@
 package com.board.board.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,10 +19,12 @@ public class ReComment {
 
     @ManyToOne
     @JoinColumn(name="member_id")
+    @JsonBackReference
     private Member member;
 
     @ManyToOne
     @JoinColumn(name="comment_id")
+    @JsonBackReference
     private Comment comment;
 
     @Lob

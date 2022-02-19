@@ -1,6 +1,8 @@
 package com.board.board.entity;
 
 import com.board.board.constant.Category;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,9 +31,11 @@ public class Board {
 
     @ManyToOne
     @JoinColumn(name="member_id")
+    @JsonBackReference
     private Member member;
 
     @OneToMany(mappedBy = "board")
+    @JsonManagedReference
     private List<Comment> comments=new ArrayList<>();
 
     @Column(name="like_")

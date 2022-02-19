@@ -1,9 +1,9 @@
 package com.board.board.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
-
-import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,16 +22,19 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="member_id")
+    @JsonBackReference
     private Member member;
 
     private String content;
     private LocalDateTime updateTime;
 
     @OneToMany(mappedBy = "comment")
+    @JsonManagedReference
     List<ReComment> Recomments=new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="board_id")
+    @JsonBackReference
     private Board board;
 
 }

@@ -57,34 +57,33 @@ public class LoginController {
 
 
     @RequestMapping("/add")
-    public String addForm(@ModelAttribute("memberFormDto") MemberFormDto memberFormDto){
+    public String addForm(@ModelAttribute("memberFormDto") MemberFormDto memberFormDto) {
         return "members/addMemberForm";
     }
 
 
-
     @PostMapping("/add")
-    public String save(@Valid @ModelAttribute MemberFormDto memberFormDto, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public String save(@Valid @ModelAttribute MemberFormDto memberFormDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "members/addMemberForm";
 
         }
-        String mail=memberFormDto.getEmail();
-        String nickname=memberFormDto.getName();
+        String mail = memberFormDto.getEmail();
+        String nickname = memberFormDto.getName();
 
-        Member cur_member=memberRepository.findByEmail(mail).orElse(null);
+        Member cur_member = memberRepository.findByEmail(mail).orElse(null);
 
-        if(cur_member!=null){
-            bindingResult.reject("addMemberFail","이미 가입한 회원이에요");
+        if (cur_member != null) {
+            bindingResult.reject("addMemberFail", "이미 가입한 회원이에요");
             return "members/addMemberForm";
         }
-        Member cur_member2=memberRepository.findByName(nickname).orElse(null);
-        if(cur_member2!=null){
-            bindingResult.reject("addMemberFail","닉네임을 다시 설정해 주세요");
+        Member cur_member2 = memberRepository.findByName(nickname).orElse(null);
+        if (cur_member2 != null) {
+            bindingResult.reject("addMemberFail", "닉네임을 다시 설정해 주세요");
             return "members/addMemberForm";
         }
-        if(memberFormDto.getCh_password().equals(memberFormDto.getPassword())){
-            Member member=new Member();
+        if (memberFormDto.getCh_password().equals(memberFormDto.getPassword())) {
+            Member member = new Member();
             member.setPassword(memberFormDto.getPassword());
             member.setRole(Role.USER);
             member.setName(memberFormDto.getName());
@@ -92,9 +91,8 @@ public class LoginController {
             member.setLevel(Level.level1);
             memberRepository.save(member);
             return "redirect:/";
-        }
-        else{
-            bindingResult.reject("addMemberFail","비밀번호가 달라요~");
+        } else {
+            bindingResult.reject("addMemberFail", "비밀번호가 달라요~");
             return "members/addMemberForm";
         }
 
@@ -102,37 +100,37 @@ public class LoginController {
 
 
     @RequestMapping("/login")
-    public String loginForm(@ModelAttribute("loginFormDto")LoginFormDto loginFormDto){
-            return "members/loginForm";
+    public String loginForm(@ModelAttribute("loginFormDto") LoginFormDto loginFormDto) {
+        return "members/loginForm";
     }
 
 
+    @PostMapping("/login")
+    public String login(@RequestBody LoginFormDto loginFormDto, BindingResult bindingResult,
+                        HttpServletRequest request) {
 
-     @PostMapping("/login")
-    public String login1(@Valid @ModelAttribute("loginFormDto")LoginFormDto loginFormDto, BindingResult bindingResult,
-                        HttpServletRequest request){
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "members/loginForm";
         }
-        Member loginMember=loginService.Login(loginFormDto.getEmail(),loginFormDto.getPassword());
-        if (loginMember==null){
-            bindingResult.reject("loginFail","이메일 또는 비밀번호가 맞지 않습니다.");
+        Member loginMember = loginService.Login(loginFormDto.getEmail(), loginFormDto.getPassword());
+        if (loginMember == null) {
+            bindingResult.reject("loginFail", "이메일 또는 비밀번호가 맞지 않습니다.");
             return "members/loginForm";
         }
         //로그인 성공처리
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션을 생성(기본값이 true)
-        HttpSession session=request.getSession(true);
-        session.setAttribute(SessionConst.LOGIN_USER,loginMember);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(SessionConst.LOGIN_USER, loginMember);
         return "redirect:/";
     }
 
 
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request){
-        HttpSession session=request.getSession(false);//있는 세션 가져오고 만약 없으면 null반환
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);//있는 세션 가져오고 만약 없으면 null반환
         log.info("로그아웃1");
-        if(session != null){
+        if (session != null) {
             session.invalidate();
 
         }
@@ -141,65 +139,65 @@ public class LoginController {
     }
 
     @GetMapping("/my")
-    public String my(@SessionAttribute(name= SessionConst.LOGIN_USER,required = false) Member loginMember, Model model){
+    public String my(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember, Model model) {
 
-        if (loginMember==null){
-          return "redirect:/members/login";
+        if (loginMember == null) {
+            return "redirect:/members/login";
         }
-        model.addAttribute("member",loginMember);
+        model.addAttribute("member", loginMember);
         return "members/my";
     }
-    @GetMapping("/myBoard")
-    public String myBoard(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
 
-        if (loginMember==null){
+    @GetMapping("/myBoard")
+    public String myBoard(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember, Model model) {
+
+        if (loginMember == null) {
             return "redirect:/members/login";
         }
 
-        List<Board> boards=boardRepository.findByMember(loginMember);
+        List<Board> boards = boardRepository.findByMember(loginMember);
 
 
-        model.addAttribute("boards",boards);
-        model.addAttribute("member",loginMember);
+        model.addAttribute("boards", boards);
+        model.addAttribute("member", loginMember);
         return "members/myBoards";
     }
+
     @GetMapping("/myComment")
-    public String myComments(@SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
-        if (loginMember==null){
+    public String myComments(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember, Model model) {
+        if (loginMember == null) {
             return "redirect:/members/login";
         }
 
-        List<Comment> comments=commentRepository.findComments(loginMember);
-        log.info("size={}",comments.size());
-        model.addAttribute("comments",comments);
-        model.addAttribute("member",loginMember);
+        List<Comment> comments = commentRepository.findComments(loginMember);
+        log.info("size={}", comments.size());
+        model.addAttribute("comments", comments);
+        model.addAttribute("member", loginMember);
         return "members/myComments";
     }
 
     @GetMapping("/changePwd")
-    public String myChangePwd(@ModelAttribute("changePwdDto")ChangePwdDto changePwdDto) {
+    public String myChangePwd(@ModelAttribute("changePwdDto") ChangePwdDto changePwdDto) {
 
         return "members/changePwd";
 
     }
 
     @PostMapping("/changePwd")
-    public String changePWd(@Valid  @ModelAttribute("changePwdDto")ChangePwdDto changePwdDto, BindingResult bindingResult,
-                            @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember){
-        if(bindingResult.hasErrors()){
+    public String changePWd(@Valid @ModelAttribute("changePwdDto") ChangePwdDto changePwdDto, BindingResult bindingResult,
+                            @SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember) {
+        if (bindingResult.hasErrors()) {
             return "members/changePwd";
         }
-        if(loginMember.getPassword().equals(changePwdDto.getCur_pwd())){
-                if(changePwdDto.getNew_pwd().equals(changePwdDto.getCh_new_pwd())) {
-                    loginMember.setPassword(changePwdDto.getNew_pwd());
-                    memberRepository.save(loginMember);
-                }
-                else{
-                    bindingResult.reject("ChangePwdErr", "새로운 비밀번호가 일치하지 않아요~");
-                    return "members/changePwd";
-                }
-        }
-        else {
+        if (loginMember.getPassword().equals(changePwdDto.getCur_pwd())) {
+            if (changePwdDto.getNew_pwd().equals(changePwdDto.getCh_new_pwd())) {
+                loginMember.setPassword(changePwdDto.getNew_pwd());
+                memberRepository.save(loginMember);
+            } else {
+                bindingResult.reject("ChangePwdErr", "새로운 비밀번호가 일치하지 않아요~");
+                return "members/changePwd";
+            }
+        } else {
             bindingResult.reject("ChangePwdErr", "현재 비밀번호가 일치하지 않아요~");
             return "members/changePwd";
         }
@@ -207,53 +205,52 @@ public class LoginController {
 
 
     }
+
     @GetMapping("/scrap")
     public String scrap(@RequestParam("id") Long id,
-                        @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember)
-
-    {
-        if (loginMember==null){
+                        @SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember) {
+        if (loginMember == null) {
             return "redirect:/members/login";
         }
-        BoardScrap boardScrap=new BoardScrap();
-        Board board=boardRepository.findById(id).orElse(null);
+        BoardScrap boardScrap = new BoardScrap();
+        Board board = boardRepository.findById(id).orElse(null);
         boardScrap.setBoard(board);
         boardScrap.setMember(loginMember);
         boardScrapRepository.save(boardScrap);
-        return"redirect:/members/myScrap";
+        return "redirect:/members/myScrap";
     }
 
 
     @GetMapping("/myScrap")
-    public String myScrap( @SessionAttribute(name=SessionConst.LOGIN_USER,required = false)Member loginMember,Model model){
+    public String myScrap(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) Member loginMember, Model model) {
 
-        List<BoardScrap> boards=boardScrapRepository.findBoard(loginMember);
+        List<BoardScrap> boards = boardScrapRepository.findBoard(loginMember);
 
-        model.addAttribute("boards",boards);
-        model.addAttribute("member",loginMember);
+        model.addAttribute("boards", boards);
+        model.addAttribute("member", loginMember);
         return "members/myScrapboard";
 
     }
 
     @GetMapping("/findPwd")
-    public String findPwd(@ModelAttribute("findPwdDto") FindPwdDto findPwdDto){
+    public String findPwd(@ModelAttribute("findPwdDto") FindPwdDto findPwdDto) {
         return "members/FindPwd";
     }
 
     @PostMapping("/findPwd")
-    public String findPwd1(@Valid @ModelAttribute("findPwdDto") FindPwdDto findPwdDto,BindingResult bindingResult){
+    public String findPwd1(@Valid @ModelAttribute("findPwdDto") FindPwdDto findPwdDto, BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "members/FindPwd";
         }
-        Member member=memberRepository.findByEmail(findPwdDto.getEmail()).orElse(null);
-        if(member==null){
+        Member member = memberRepository.findByEmail(findPwdDto.getEmail()).orElse(null);
+        if (member == null) {
             bindingResult.reject("FindPwdErr", "가입되지 않은 회원이에요");
             return "members/FindPwd";
         }
-        SimpleMailMessage simpleMailMessage=new SimpleMailMessage();
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        String uuid= UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
 
         member.setPassword(uuid);
         memberRepository.save(member);
@@ -261,10 +258,10 @@ public class LoginController {
         simpleMailMessage.setFrom(from);
         simpleMailMessage.setTo(findPwdDto.getEmail());
         simpleMailMessage.setSubject("임시 비밀번호 발송");
-        simpleMailMessage.setText("임시 비밀번호는 "+uuid+"입니다. 로그인 후 비밀번호를 변경해 주세요.");
+        simpleMailMessage.setText("임시 비밀번호는 " + uuid + "입니다. 로그인 후 비밀번호를 변경해 주세요.");
 
         javaMailSender.send(simpleMailMessage);
-        return"redirect:/";
+        return "redirect:/";
     }
 }
 
